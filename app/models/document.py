@@ -10,6 +10,7 @@ from app.db.base import Base
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app.models.user import User  # noqa: F401
+    from app.models.document_chunk import DocumentChunk  # noqa: F401
 
 class DocumentStatus(str, Enum):
     PENDING = "pending"
@@ -43,3 +44,4 @@ class Document(Base):
     )
 
     owner: Mapped["User"] = relationship(back_populates="documents")
+    chunks: Mapped[list["DocumentChunk"]] = relationship(back_populates="document")
