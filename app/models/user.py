@@ -11,6 +11,7 @@ from app.db.base import Base
 
 if TYPE_CHECKING:
     from app.models.document import Document
+    from app.models.conversation import Conversation
 
 
 class UserRole(str, Enum):
@@ -36,5 +37,8 @@ class User(Base):
     )
 
     documents: Mapped[list["Document"]] = relationship(
+        back_populates="owner", cascade="all, delete-orphan"
+    )
+    conversations: Mapped[list["Conversation"]] = relationship(
         back_populates="owner", cascade="all, delete-orphan"
     )
