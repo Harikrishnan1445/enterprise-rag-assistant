@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
-
+    max_upload_size_mb: int = 20
+    storage_path: str = "storage/documents"
+    allowed_file_types: str = "pdf,docx,txt"
 
 settings = Settings()
