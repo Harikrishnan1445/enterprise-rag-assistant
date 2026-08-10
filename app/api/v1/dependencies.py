@@ -36,3 +36,20 @@ async def get_current_user(
         raise credentials_exception
 
     return user
+
+
+def require_admin(current_user: User = Depends(get_current_user)) -> User:
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This action requires admin privileges.",
+        )
+    return current_user
+
+
+def ensure_owner(resource_owner_id, current_user: User) -> None:
+    if str(resource_owner_id) != str(current_user.id) and current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have access to this resource.",
+        )
