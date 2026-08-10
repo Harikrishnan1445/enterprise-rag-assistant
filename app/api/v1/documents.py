@@ -42,3 +42,10 @@ async def delete_document(
 ) -> None:
     service = DocumentService(db)
     await service.delete_owned(document_id, current_user.id)
+@router.post("/{document_id}/process", response_model=DocumentResponse)
+async def process_document(
+    document_id: uuid.UUID, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+) -> DocumentResponse:
+    service = DocumentService(db)
+    doc, _ = await service.process(document_id, current_user.id)
+    return doc
