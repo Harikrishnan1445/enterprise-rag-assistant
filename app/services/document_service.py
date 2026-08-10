@@ -10,6 +10,8 @@ from app.models.document import Document
 from app.repositories.document_repository import DocumentRepository
 from app.document_processing.cleaner import clean_text
 from app.document_processing.extractor import extract_text
+from app.document_processing.chunker import chunk_text
+from app.models.document_chunk import DocumentChunk
 
 ALLOWED_TYPES = set(settings.allowed_file_types.split(","))
 
@@ -81,10 +83,23 @@ class DocumentService:
             if not cleaned:
                 raise ValueError("No extractable text found in document.")
 
+            chunks = chunk_text(cleaned)
+            if not chunks:
+                raise ValueError("Text produced no chunks.")
+
+            for index, chunk_content in enumerate(chunks):
+                chunk = DocumentChunk(
+                    document_id=doc.id,
+                    chunk_index=index,
+                    content=chunk_content,
+                    token_count=len(chunk_content.split()),
+                )
+                self.db.add(chunk)
+
             doc.processing_status = "completed"
             await self.db.commit()
             await self.db.refresh(doc)
-            return doc, cleaned
+            return doc
 
         except Exception as e:
             doc.processing_status = "failed"
