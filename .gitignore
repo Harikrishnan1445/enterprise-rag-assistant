@@ -19,3 +19,8 @@ Thumbs.db
 *.log
 
 storage/
+
+# Test files
+test.txt
+longtest.txt
+ml_document.txt
