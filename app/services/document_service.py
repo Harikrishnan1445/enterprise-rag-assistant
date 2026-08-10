@@ -12,7 +12,7 @@ from app.document_processing.cleaner import clean_text
 from app.document_processing.extractor import extract_text
 from app.document_processing.chunker import chunk_text
 from app.models.document_chunk import DocumentChunk
-
+from app.rag.embedder import embed_texts
 ALLOWED_TYPES = set(settings.allowed_file_types.split(","))
 
 
@@ -87,11 +87,14 @@ class DocumentService:
             if not chunks:
                 raise ValueError("Text produced no chunks.")
 
-            for index, chunk_content in enumerate(chunks):
+            embeddings = embed_texts(chunks)
+
+            for index, (chunk_content, embedding) in enumerate(zip(chunks, embeddings)):
                 chunk = DocumentChunk(
                     document_id=doc.id,
                     chunk_index=index,
                     content=chunk_content,
+                    embedding=embedding,
                     token_count=len(chunk_content.split()),
                 )
                 self.db.add(chunk)
