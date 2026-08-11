@@ -1,3 +1,4 @@
+![CI](https://github.com/Harikrishnan1445/enterprise-rag-assistant/actions/workflows/ci.yml/badge.svg)
 # Enterprise Knowledge Intelligence & RAG Assistant
 
 A local-first, fully containerized Retrieval-Augmented Generation (RAG) system: upload documents, ask natural-language questions, and get answers grounded in your own content — with cited sources, conversation history, and a measured (not assumed) evaluation of retrieval and answer quality.
