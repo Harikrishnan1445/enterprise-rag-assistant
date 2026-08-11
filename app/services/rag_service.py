@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.document_chunk import DocumentChunk
 from app.rag.embedder import embed_query
 from app.rag.llm_client import generate_answer
 from app.rag.prompt_builder import build_rag_prompt

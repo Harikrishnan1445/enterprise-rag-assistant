@@ -1,11 +1,10 @@
-import tempfile
 import os
-import pytest
+import tempfile
+
 from app.document_processing.chunker import chunk_text
-from app.rag.embedder import embed_query, embed_texts
 from app.document_processing.cleaner import clean_text
 from app.document_processing.extractor import extract_text
-
+from app.rag.embedder import embed_query, embed_texts
 
 
 def test_chunk_text_basic():

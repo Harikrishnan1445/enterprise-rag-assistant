@@ -1,7 +1,6 @@
 import uuid
 
-from pgvector.sqlalchemy import Vector
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.document_chunk import DocumentChunk

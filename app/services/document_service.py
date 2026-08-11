@@ -1,18 +1,19 @@
 import uuid
 from pathlib import Path
 
-
+import aiofiles
 from fastapi import HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.models.document import Document
-from app.repositories.document_repository import DocumentRepository
+from app.document_processing.chunker import chunk_text
 from app.document_processing.cleaner import clean_text
 from app.document_processing.extractor import extract_text
-from app.document_processing.chunker import chunk_text
+from app.models.document import Document
 from app.models.document_chunk import DocumentChunk
 from app.rag.embedder import embed_texts
+from app.repositories.document_repository import DocumentRepository
+
 ALLOWED_TYPES = set(settings.allowed_file_types.split(","))
 
 
@@ -45,9 +46,8 @@ class DocumentService:
         unique_name = f"{uuid.uuid4()}.{ext}"
         file_path = storage_dir / unique_name
 
-        with open(file_path, "wb") as f:
-            f.write(content)
-
+        async with aiofiles.open(file_path, "wb") as f:
+            await f.write(content)
         return await self.repo.create(
             owner_id=owner_id,
             filename=file.filename or unique_name,
@@ -104,7 +104,7 @@ class DocumentService:
             await self.db.refresh(doc)
             return doc
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — intentional: any processing failure marks doc as failed, must not crash the pipeline
             doc.processing_status = "failed"
             doc.processing_error = str(e)[:1000]
             await self.db.commit()

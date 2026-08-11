@@ -12,7 +12,7 @@ from app.api.v1.users import router as users_router
 from app.core.config import settings
 from app.core.logging_config import setup_logging
 from app.db.session import get_db
-from app.models import *  # noqa: F401, F403
+from app.models import *
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ app.include_router(chat_router)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    logger.error(f"Unhandled error on {request.method} {request.url}: {exc}", exc_info=True)
+    logger.error(f"Unhandled error on {request.method} {request.url}: {exc}")    
     return JSONResponse(
         status_code=500,
         content={"detail": "An internal server error occurred. Please try again later."},

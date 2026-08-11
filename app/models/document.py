@@ -1,16 +1,17 @@
 import uuid
 from datetime import datetime
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import BigInteger, DateTime, ForeignKey, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
-from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
-    from app.models.user import User  # noqa: F401
-    from app.models.document_chunk import DocumentChunk  # noqa: F401
+    from app.models.document_chunk import DocumentChunk
+    from app.models.user import User
 
 class DocumentStatus(str, Enum):
     PENDING = "pending"
