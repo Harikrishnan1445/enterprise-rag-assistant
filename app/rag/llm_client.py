@@ -1,6 +1,6 @@
 import httpx
 
-OLLAMA_BASE_URL = "http://localhost:11434"
+OLLAMA_BASE_URL = "http://host.docker.internal:11434"
 DEFAULT_MODEL = "phi3:mini"
 
 
