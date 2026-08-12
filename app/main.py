@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import Depends, FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,7 +14,6 @@ from app.core.config import settings
 from app.core.logging_config import setup_logging
 from app.db.session import get_db
 from app.models import *
-from fastapi.middleware.cors import CORSMiddleware
 
 setup_logging()
 logger = logging.getLogger(__name__)

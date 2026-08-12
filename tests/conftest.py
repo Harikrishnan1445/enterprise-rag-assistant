@@ -1,3 +1,4 @@
+import os
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -5,8 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.db.session import get_db
 from app.main import app
 
-TEST_DATABASE_URL = "postgresql+asyncpg://raguser:ragpassword@localhost:5432/ragdb"
-
+TEST_DATABASE_URL = os.getenv(
+    "TEST_DATABASE_URL","postgresql+asyncpg://raguser:ragpassword@localhost:5432/ragdb"
+)
 
 @pytest_asyncio.fixture
 async def client():
