@@ -1,4 +1,5 @@
 ![CI](https://github.com/Harikrishnan1445/enterprise-rag-assistant/actions/workflows/ci.yml/badge.svg)
+
 # Enterprise Knowledge Intelligence & RAG Assistant
 
 A local-first, fully containerized Retrieval-Augmented Generation (RAG) system: upload documents, ask natural-language questions, and get answers grounded in your own content — with cited sources, conversation history, and a measured (not assumed) evaluation of retrieval and answer quality.
@@ -16,7 +17,7 @@ Generic LLMs can't answer questions about private or organization-specific docum
 ## Architecture
 
 ```
-Client (Swagger / future frontend)
+Browser (static frontend, served by FastAPI)
         │
         ▼
    FastAPI application (Docker container: app)
@@ -38,7 +39,7 @@ Client (Swagger / future frontend)
    Grounded answer + cited source chunks → stored in conversation history
 ```
 
-The FastAPI app and PostgreSQL both run inside Docker Compose on a shared network. Ollama runs on the host machine (not containerized) and is reached from inside the container via `host.docker.internal`.
+The FastAPI app and PostgreSQL both run inside Docker Compose on a shared network. Ollama runs on the host machine (not containerized) and is reached from inside the container via `host.docker.internal`. The frontend is a static single-page app served directly by FastAPI at `/` — no separate frontend service or build step.
 
 ---
 
@@ -47,6 +48,7 @@ The FastAPI app and PostgreSQL both run inside Docker Compose on a shared networ
 | Layer | Technology |
 |---|---|
 | API framework | FastAPI |
+| Frontend | Static HTML/CSS/JS (vanilla), served by FastAPI |
 | Language | Python 3.13 |
 | Database | PostgreSQL 16 + pgvector |
 | ORM / migrations | SQLAlchemy (async) + Alembic |
@@ -64,13 +66,14 @@ No paid services are used anywhere in the stack.
 
 ## Features
 
+- Web UI: login/register, drag-and-drop document upload, chat interface with live retrieval visualization
 - User registration & login (JWT-based auth, bcrypt password hashing)
 - Role-based authorization
 - Document upload (PDF, DOCX, TXT) with async processing
 - Text extraction → cleaning → chunking pipeline
 - Local embedding generation and pgvector storage
 - Semantic search (cosine similarity) with HNSW indexing
-- RAG-grounded chat: answers cite the specific source chunks used
+- RAG-grounded chat: answers cite the specific source chunks used, with expandable source previews
 - Persistent conversation history
 - Global error handling & structured logging
 - Automated tests (16/16 passing) and CI-enforced on every push
@@ -127,7 +130,7 @@ docker compose up --build -d
 docker compose exec app alembic upgrade head
 ```
 
-API available at `http://localhost:8000`, interactive docs at `http://localhost:8000/docs`.
+Open `http://localhost:8000` in a browser for the web UI, or `http://localhost:8000/docs` for interactive API docs.
 
 ### Run tests
 ```bash
@@ -195,12 +198,10 @@ GitHub Actions (`.github/workflows/ci.yml`) runs on every push:
 
 - Local CPU-only LLM inference is slow (~25–30s/request) — a deliberate tradeoff for zero infrastructure cost
 - RAG evaluation covers 8 questions across 4 documents — a proof of methodology, not a large-scale benchmark
-- No frontend yet (optional, Phase 33 — backend-only currently)
 - Minor IDOR information-leak (document existence, not content) noted but not fixed
 
 ## Future Improvements
 
-- Optional lightweight frontend (login, upload, chat, source view)
 - Expand RAG evaluation corpus and test cases
 - Fix the 403/404 existence-leak on document endpoints
 - Investigate GPU-accelerated inference or a smaller/faster local model for latency
